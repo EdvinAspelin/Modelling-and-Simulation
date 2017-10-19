@@ -24,7 +24,7 @@ b = [1/2, 1/2];
 f = @(t,x)VanDerPol(t,x);
 
 for i = 1:s
-    r(n*i-(n-1):n*i,1) = K(i,:).' - f(t + dt,x + (dt*A(i,:)*K).');
+    r(n*i-(n-1):n*i,1) = K(i,:).' - f(t + dt,x + (dt*A(i,:)*K.').');
 end
 dr = jacobian(reshape(r,[s*2,1]),reshape(K,[s*2,1]));
 matlabFunction(r,dr, 'file', 'rFileIRK1','vars',{t,x,K,dt});
@@ -75,4 +75,31 @@ for subfig = 1:n
     plot(tIRK4,xIRK4(subfig,:),'r')
     plot(tVDP,xVDP(:,subfig),'b')
 end
+set(gca,'fontsize',20)
+legend('Exact','IRK4','RK4')
+
+%% Task 3
+n = 3;
+p  = sym('p',[n,1]);
+v  = sym('v',[n,1]);
+x = [p;v];
+syms t real
+
+dp = v;
+dv = -g*[0;0;1] - (1/m)*z*p;
+dz = -v.'*v\p.';
+
+matlabFunction([dp,dv,dz],'File','daeFunc','Vars',{t,x})
+
+s = 2;
+K = sym('K',[2,s]);
+x = sym('x',[2,1]);
+syms t dt real
+
+A = [1/4, 1/4-sqrt(3)/6;
+    1/4+sqrt(3)/6, 1/4];
+b = [1/2, 1/2];
+
+
+
 
